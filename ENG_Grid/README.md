@@ -20,7 +20,7 @@ du --max-depth=1 -h
 
 ## Hardware-related Resources
 
-ENG Grid includes computers in PHO 305/307 and some other computers. If possible try to work on PHO 305 (VLSI, better hardware) or remotely with ssh://eng-grid.bu.edu (computers in other labs is more powerful!).
+ENG Grid includes computers in PHO 305/307 and some other computers. If possible try to work on PHO 305 (VLSI, better hardware) or remotely with ssh://engineering-grid.bu.edu (computers in other labs is more powerful!).
 
 - Help docs on Grid: http://collaborate.bu.edu/engit/Grid/
 - Grid resource monitor: http://eng-grid-monitor.bu.edu
