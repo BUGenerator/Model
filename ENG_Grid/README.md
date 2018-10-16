@@ -1,4 +1,6 @@
-# First thing to know
+# Working with ENG Grid
+
+## First Thing to Know
 
 - Installation of our enviroument in Anaconda: ~3.1 GB
 - Home folder quota on ENGNAS: 10GB
@@ -16,7 +18,15 @@ To check which folder is large in the current working directory:
 du --max-depth=1 -h
 ```
 
-# Development Environment
+## Hardware-related Resources
+
+ENG Grid includes computers in PHO 305/307 and some other computers. If possible try to work on PHO 305 (VLSI, better hardware) or remotely with ssh://eng-grid.bu.edu (computers in other labs is more powerful!).
+
+- Help docs on Grid: http://collaborate.bu.edu/engit/Grid/
+- Grid resource monitor: http://eng-grid-monitor.bu.edu
+- There is some GPU resource here (enrollment required), for more: http://collaborate.bu.edu/engit/Grid/GridGPU
+
+## Development Environment
 
 With everything like Jupyter, etc.
 
