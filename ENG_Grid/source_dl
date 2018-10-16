@@ -1,0 +1,7 @@
+#!/bin/bash
+module load anaconda
+export FAST_TEMP_STORAGE=/tmp/$USER
+mkdir $FAST_TEMP_STORAGE
+chmod 744 $FAST_TEMP_STORAGE
+cd $FAST_TEMP_STORAGE
+source activate dl

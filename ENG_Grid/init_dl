@@ -1,0 +1,11 @@
+#!/bin/bash
+export FAST_TEMP_STORAGE=/tmp/$USER
+mkdir $FAST_TEMP_STORAGE
+chmod 744 $FAST_TEMP_STORAGE
+
+module load anaconda
+# export HOME=/tmp/$USER
+conda create -n dl python=3.6 keras ipykernel jupyter numpy scipy pandas matplotlib tensorflow scikit-image scikit-learn
+
+# might need to install this to let jupyter detect Python3?
+python -m ipykernel install --user
