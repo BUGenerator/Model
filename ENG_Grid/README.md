@@ -47,3 +47,7 @@ After starting the environment:
 
 - `jupyter notebook` to start the notebook (necessary for opening `.ipynb`)
 - `python` to start the python shell
+
+## GPU support
+
+Currently init_dl and source_dl only supports CPU computation. GPU support will be tried later.
