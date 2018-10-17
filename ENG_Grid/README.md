@@ -35,7 +35,7 @@ We are not using Docker because it needs root access, while Anaconda does not.
 - Init Anaconda environment to your HOME folder:
    - firstly install Anaconda on the machine
       - which already exists on ENG Grid (so you don't need to install again)
-      - to make sure: `conda -V`
+      - to make sure: `module load anaconda` (no output - correct)
    - then download [init_dl](init_dl) and execute `./init_dl` (anywhere is OK)
       - If failed in the middle: check whether HOME folder is full (see the previous section about the quota)
 - Start the environment:
