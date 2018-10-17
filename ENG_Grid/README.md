@@ -4,7 +4,7 @@
 
 - Installation of our enviroument in Anaconda: ~3.1 GB
 - Home folder quota on ENGNAS: 10GB
-- fastest file access on ENG Grid: `/tmp`
+- fastest file access on ENG Grid: `/tmp` (but FILES WILL BE LOST AFTER REBOOT! Remember to copy the files out of there)
 - Everything related to Python in our environment should be Python 3(.6)!
 
 To check the exact quota of file storage:
