@@ -51,3 +51,24 @@ After starting the environment:
 ## GPU support
 
 Currently init_dl and source_dl only supports CPU computation. GPU support will be tried later.
+
+Because ENG Grid is retiring GPU capabilities, ECE (lab) offered a shared machine for us. Please contact @phy25 for more information.
+
+Login on to Grid jump server (Don't do `qlogin`) > `ssh phy25@ece-hpc-01` > Enter password
+
+```shell
+# Intel(R) Xeon(R) CPU E5-2650 v4 @ 2.20GHz * 24
+phy25@ECE-HPC-01:~$ lspci -vnn | grep VGA -A 12
+03:00.0 VGA compatible controller [0300]: NVIDIA Corporation GK107GL [Quadro K420] [10de:0ff3] (rev a1) (prog-if 00 [VGA controller])
+        Subsystem: NVIDIA Corporation GK107GL [Quadro K420] [10de:1106]
+        Physical Slot: 4
+        Flags: bus master, fast devsel, latency 0, IRQ 71
+        Memory at f8000000 (32-bit, non-prefetchable) [size=16M]
+        Memory at e0000000 (64-bit, prefetchable) [size=256M]
+        Memory at f0000000 (64-bit, prefetchable) [size=32M]
+        I/O ports at e000 [size=128]
+        [virtual] Expansion ROM at f9000000 [disabled] [size=512K]
+        Capabilities: <access denied>
+        Kernel driver in use: nvidia
+        Kernel modules: nvidiafb, nouveau, nvidia_384_drm, nvidia_384
+```
