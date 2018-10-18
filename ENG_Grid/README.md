@@ -56,6 +56,13 @@ Because ENG Grid is retiring GPU capabilities, ECE (lab) offered a shared machin
 
 Login on to Grid jump server (Don't do `qlogin`) > `ssh phy25@ece-hpc-01` > Enter password
 
+### Note on GPU comparison
+
+- ece-hpc-01: Quadro K420 (3.0), 1GB GMem, 62GB Mem (~49GB avail)
+- vlsi*: Quadro-K610M (3.5), 1GB GMem, 16GB Mem
+- aws-P2: Tesla K80 (3.7), 12GB GMem, 61GB Mem
+- aws-P3: Tesla V100 (7.0), 16GB GMem, 61GB Mem
+
 ```shell
 # Intel(R) Xeon(R) CPU E5-2650 v4 @ 2.20GHz * 24
 phy25@ECE-HPC-01:~$ lspci -vnn | grep VGA -A 12
@@ -72,3 +79,9 @@ phy25@ECE-HPC-01:~$ lspci -vnn | grep VGA -A 12
         Kernel driver in use: nvidia
         Kernel modules: nvidiafb, nouveau, nvidia_384_drm, nvidia_384
 ```
+
+Reference:
+
+https://www.videocardbenchmark.net/compare/Quadro-K610M-vs-Quadro-K420/2703vs2992
+
+https://developer.nvidia.com/cuda-gpus
