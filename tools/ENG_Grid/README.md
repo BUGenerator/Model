@@ -24,7 +24,7 @@ ENG Grid includes computers in PHO 305/307 and some other computers. If possible
 
 - Help docs on Grid: http://collaborate.bu.edu/engit/Grid/
 - Grid resource monitor: http://eng-grid-monitor.bu.edu
-- There is some GPU resource here (enrollment required), for more: http://collaborate.bu.edu/engit/Grid/GridGPU
+- There is some GPU resource here (enrollment required), but it is not available anymore (see [GPU support](#gpu-support)).
 
 ## Development Environment
 
@@ -48,6 +48,8 @@ After starting the environment:
 - `jupyter notebook` to start the notebook (necessary for opening `.ipynb`)
 - `python` to start the python shell
 
+Finally before you log off, remember to copy the files out of `/tmp/$USER`, or it will be lost.
+
 ## GPU support
 
 Currently init_dl and source_dl only supports CPU computation. GPU support will be tried later.
@@ -55,6 +57,13 @@ Currently init_dl and source_dl only supports CPU computation. GPU support will 
 Because ENG Grid is retiring GPU capabilities, ECE (lab) offered a shared machine for us. Please contact @phy25 for more information.
 
 Login on to Grid jump server (Don't do `qlogin`) > `ssh phy25@ece-hpc-01` > Enter password
+
+### Environment Update
+
+From ENGIT:
+
+- I've also updated the local Anaconda to 5.3 with python 3.6. It has Tensorflow-gpu 1.11 and Keras install. Please contact us is you have any questions.
+- Note I needed to downgrade Anaconda to 4.5.11.
 
 ### Note on GPU comparison
 
