@@ -3,7 +3,7 @@ import numpy as np
 from keras import models
 from skimage.morphology import binary_opening, disk
 
-fullres_model = models.load_model("fullres_model.h5")
+fullres_model = models.load_model("model_fullres_keras.h5")
 
 def _raw_prediction(img):
     img = np.expand_dims(img, 0)/255.0
