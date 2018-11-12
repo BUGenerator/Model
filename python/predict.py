@@ -19,6 +19,9 @@ def predict_by_path(img_path):
     # return smooth(cur_seg), c_img
     return seg, img
 
+def save_by_path(img, path):
+    return skimage.io.imsave(path, seg)
+
 # seg, img = predict_by_path("")
 
 # ax2.imshow(first_seg[:, :, 0], cmap=get_cmap('jet'))
