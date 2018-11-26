@@ -45,7 +45,9 @@ We are not using Docker because it needs root access, while Anaconda does not.
 
 After starting the environment:
 
+- `git clone https://github.com/BUGenerator/Model.git` to make use of this repo
 - `jupyter notebook` to start the notebook (necessary for opening `.ipynb`)
+   - Working remotely: `jupyter notebook --no-browser --ip=0.0.0.0 --port=13579`
 - `python` to start the python shell
 
 Finally before you log off, remember to copy the files out of `/tmp/$USER`, or it will be lost.
