@@ -1,11 +1,13 @@
-from skimage.io import imread, imsave
-from skimage.color import gray2rgb
 import numpy as np
 from keras import models
+from keras.preprocessing.image import load_img
+from PIL import Image
 from skimage.morphology import binary_opening, disk, label
+from skimage.measure import regionprops
 import os
 
 fullres_model = None
+MODEL_IMG_SIZE = (768, 768)
 
 def load_model():
     global fullres_model
@@ -31,32 +33,27 @@ def _raw_prediction(img):
     return seg, img[0]
 
 def smooth(seg):
-    return binary_opening(seg>0.99, np.expand_dims(disk(2), -1))
+    return binary_opening(seg>0.99, np.expand_dims(disk(2), -1)[:,:,0]).astype('uint8')
 
 def predict_by_path(img_path):
-    img = imread(img_path)
+    img = load_img(img_path, target_size=MODEL_IMG_SIZE)
+    # load_img take care of RGBA images by itself;
+    # it might have transparency issue like https://stackoverflow.com/q/9166400/4073795
     seg, img = _raw_prediction(img)
     seg = seg[:, :, 0]
-    # return smooth(cur_seg), c_img
-    return seg, img
+    return smooth(seg), img
+    # return seg, img
 
-def save_by_path(img, path):
-    rgb = gray2rgb(img)
-    return imsave(path, rgb)
+def save_by_path(seg, path):
+    seg = seg.astype('uint8')*255
+    return Image.fromarray(seg).convert("RGB").save(path)
 
 def extract_seg(seg):
     labels = label(seg)
-    if seg.ndim > 2:
-        segs = [np.sum(labels==k, axis=2) for k in np.unique(labels[labels>0])]
-    else:
-        segs = [labels==k for k in np.unique(labels[labels>0])]
+    regions_original = regionprops(labels)
+    regions = [region.bbox for region in regions_original if region.area > 100]
+    # bbox: (min_row, min_col, max_row, max_col)
 
-    for i in segs:
-        pass
-
-    return len(segs)
+    return {'regions': regions, 'size': MODEL_IMG_SIZE}
 
 # seg, img = predict_by_path("")
-
-# ax2.imshow(first_seg[:, :, 0], cmap=get_cmap('jet'))
-# reencoded = masks_as_color(multi_rle_encode(smooth(first_seg)[:, :, 0]))
