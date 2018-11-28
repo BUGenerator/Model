@@ -1,0 +1,3 @@
+#!/bin/bash
+module load python/3.6.2 tensorflow
+cd /projectnb/ece601/BUGenerator
