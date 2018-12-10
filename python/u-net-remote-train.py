@@ -13,6 +13,7 @@ MAX_TRAIN_STEPS = 100
 # after each number of epochs it will check where loss goal is reached
 MAX_TRAIN_EPOCHS = 3
 LOSS_GOAL = -0.2
+# as of 2.0.8 keras has no support
 AUGMENT_BRIGHTNESS = False
 TEST_PERCENTAGE = 0.3
 
