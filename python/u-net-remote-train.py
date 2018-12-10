@@ -100,17 +100,17 @@ print((~not_empty).sum(), 'empty images in', masks.ImageId.nunique(), 'total ima
 masks['ships'] = masks['EncodedPixels'].map(lambda c_row: 1 if isinstance(c_row, str) else 0)
 unique_img_ids = masks.groupby('ImageId').agg({'ships': 'sum'}).reset_index()
 # filter unavailable files
-unique_img_ids['is_available'] = unique_img_ids['ImageId'].map(
-    lambda imgid: os.path.isfile(os.path.join(train_image_dir, imgid)))
-unique_img_ids = unique_img_ids[unique_img_ids['is_available']]
+# unique_img_ids['is_available'] = unique_img_ids['ImageId'].map(
+#     lambda imgid: os.path.isfile(os.path.join(train_image_dir, imgid)))
+# unique_img_ids = unique_img_ids[unique_img_ids['is_available']]
 
 unique_img_ids['has_ship'] = unique_img_ids['ships'].map(lambda x: 1.0 if x>0 else 0.0)
 unique_img_ids['has_ship_vec'] = unique_img_ids['has_ship'].map(lambda x: [x])
 # some files are too small/corrupt
-unique_img_ids['file_size_kb'] = unique_img_ids['ImageId'].map(lambda c_img_id:
+# unique_img_ids['file_size_kb'] = unique_img_ids['ImageId'].map(lambda c_img_id:
                                                                os.stat(os.path.join(train_image_dir,
                                                                                     c_img_id)).st_size/1024)
-unique_img_ids = unique_img_ids[unique_img_ids['file_size_kb'] > 20] # keep only +50kb files
+# unique_img_ids = unique_img_ids[unique_img_ids['file_size_kb'] > 20] # keep only +50kb files
 # unique_img_ids['file_size_kb'].hist()
 masks.drop(['ships'], axis=1, inplace=True)
 
