@@ -28,9 +28,9 @@ from skimage.morphology import binary_opening, disk, label
 import gc; gc.enable() # memory is tight
 
 montage_rgb = lambda x: np.stack([montage(x[:, :, :, i]) for i in range(x.shape[3])], -1)
-ship_dir = '../../input'
-train_image_dir = os.path.join(ship_dir, 'train')
-test_image_dir = os.path.join(ship_dir, 'test')
+ship_dir = '../../'
+train_image_dir = os.path.join(ship_dir, 'train_v2')
+# test_image_dir = os.path.join(ship_dir, 'test')
 
 def multi_rle_encode(img, **kwargs):
     '''
@@ -61,7 +61,7 @@ def rle_encode(img, min_max_threshold=1e-3, max_mean_threshold=None):
 def rle_decode(mask_rle, shape=(768, 768)):
     '''
     mask_rle: run-length as string formated (start length)
-    shape: (height,width) of array to return 
+    shape: (height,width) of array to return
     Returns numpy array, 1 - mask, 0 - background
     '''
     s = mask_rle.split()
@@ -84,7 +84,7 @@ def masks_as_image(in_mask_list):
 def masks_as_color(in_mask_list):
     # Take the individual ship masks and create a color mask array for each ships
     all_masks = np.zeros((768, 768), dtype = np.float)
-    scale = lambda x: (len(in_mask_list)+x+1) / (len(in_mask_list)*2) ## scale the heatmap image to shift 
+    scale = lambda x: (len(in_mask_list)+x+1) / (len(in_mask_list)*2) ## scale the heatmap image to shift
     for i,mask in enumerate(in_mask_list):
         if isinstance(mask, str):
             all_masks[:,:] += scale(i) * rle_decode(mask)
@@ -105,8 +105,8 @@ unique_img_ids = unique_img_ids[unique_img_ids['is_available']]
 unique_img_ids['has_ship'] = unique_img_ids['ships'].map(lambda x: 1.0 if x>0 else 0.0)
 unique_img_ids['has_ship_vec'] = unique_img_ids['has_ship'].map(lambda x: [x])
 # some files are too small/corrupt
-unique_img_ids['file_size_kb'] = unique_img_ids['ImageId'].map(lambda c_img_id: 
-                                                               os.stat(os.path.join(train_image_dir, 
+unique_img_ids['file_size_kb'] = unique_img_ids['ImageId'].map(lambda c_img_id:
+                                                               os.stat(os.path.join(train_image_dir,
                                                                                     c_img_id)).st_size/1024)
 unique_img_ids = unique_img_ids[unique_img_ids['file_size_kb'] > 20] # keep only +50kb files
 # unique_img_ids['file_size_kb'].hist()
@@ -117,8 +117,8 @@ balanced_train_df = unique_img_ids.groupby('ships').apply(lambda x: x.sample(SAM
 balanced_train_df['ships'].hist(bins=balanced_train_df['ships'].max()+1).figure.savefig("samples-dist.png")
 
 from sklearn.model_selection import train_test_split
-train_ids, valid_ids = train_test_split(balanced_train_df, 
-                 test_size = TEST_PERCENTAGE, 
+train_ids, valid_ids = train_test_split(balanced_train_df,
+                 test_size = TEST_PERCENTAGE,
                  #stratify = balanced_train_df['ships']
                 )
 train_df = pd.merge(masks, train_ids)
@@ -144,7 +144,7 @@ def make_image_gen(in_df, batch_size = BATCH_SIZE):
             if len(out_rgb)>=batch_size:
                 yield np.stack(out_rgb, 0)/255.0, np.stack(out_mask, 0)
                 out_rgb, out_mask=[], []
-                
+
 train_gen = make_image_gen(train_df)
 train_x, train_y = next(train_gen)
 print('x', train_x.shape, train_x.min(), train_x.max())
@@ -154,18 +154,18 @@ valid_x, valid_y = next(make_image_gen(valid_df, VALID_IMG_COUNT))
 print(valid_x.shape, valid_y.shape)
 
 from keras.preprocessing.image import ImageDataGenerator
-dg_args = dict(featurewise_center = False, 
+dg_args = dict(featurewise_center = False,
                   samplewise_center = False,
-                  rotation_range = 45, 
-                  width_shift_range = 0.1, 
-                  height_shift_range = 0.1, 
+                  rotation_range = 45,
+                  width_shift_range = 0.1,
+                  height_shift_range = 0.1,
                   shear_range = 0.01,
-                  zoom_range = [0.9, 1.25],  
-                  horizontal_flip = True, 
+                  zoom_range = [0.9, 1.25],
+                  horizontal_flip = True,
                   vertical_flip = True,
                   fill_mode = 'reflect',
                    data_format = 'channels_last')
-# brightness can be problematic since it seems to change the labels differently from the images 
+# brightness can be problematic since it seems to change the labels differently from the images
 if AUGMENT_BRIGHTNESS:
     dg_args['brightness_range'] = [0.5, 1.5]
 image_gen = ImageDataGenerator(**dg_args)
@@ -179,17 +179,17 @@ def create_aug_gen(in_gen, seed = None):
     for in_x, in_y in in_gen:
         seed = np.random.choice(range(9999))
         # keep the seeds syncronized otherwise the augmentation to the images is different from the masks
-        g_x = image_gen.flow(255*in_x, 
-                             batch_size = in_x.shape[0], 
-                             seed = seed, 
+        g_x = image_gen.flow(255*in_x,
+                             batch_size = in_x.shape[0],
+                             seed = seed,
                              shuffle=True)
-        g_y = label_gen.flow(in_y, 
-                             batch_size = in_x.shape[0], 
-                             seed = seed, 
+        g_y = label_gen.flow(in_y,
+                             batch_size = in_x.shape[0],
+                             seed = seed,
                              shuffle=True)
 
         yield next(g_x)/255.0, next(g_y)
-        
+
 cur_gen = create_aug_gen(train_gen)
 t_x, t_y = next(cur_gen)
 print('x', t_x.shape, t_x.dtype, t_x.min(), t_x.max())
@@ -198,7 +198,7 @@ t_x = t_x[:9]
 t_y = t_y[:9]
 
 gc.collect()
-        
+
 from keras import models, layers
 # Build U-Net model
 def upsample_conv(filters, kernel_size, strides, padding):
@@ -210,13 +210,13 @@ if UPSAMPLE_MODE=='DECONV':
     upsample=upsample_conv
 else:
     upsample=upsample_simple
-    
+
 input_img = layers.Input(t_x.shape[1:], name = 'RGB_Input')
 pp_in_layer = input_img
 
 if NET_SCALING is not None:
     pp_in_layer = layers.AvgPool2D(NET_SCALING)(pp_in_layer)
-    
+
 pp_in_layer = layers.GaussianNoise(GAUSSIAN_NOISE)(pp_in_layer)
 pp_in_layer = layers.BatchNormalization()(pp_in_layer)
 
@@ -298,7 +298,7 @@ callbacks_list = [checkpoint, early, reduceLROnPlat]
 
 def fit():
     seg_model.compile(optimizer=Adam(1e-3, decay=1e-6), loss=IoU, metrics=['binary_accuracy'])
-    
+
     step_count = min(MAX_TRAIN_STEPS, train_df.shape[0]//BATCH_SIZE)
     aug_gen = create_aug_gen(make_image_gen(train_df))
     return seg_model.fit_generator(aug_gen,
@@ -313,17 +313,17 @@ def show_loss(loss_history):
     #epochs = np.concatenate([mh.epoch for mh in loss_history])
     epochs = np.array(range(sum([len(mh.epoch) for mh in loss_history])))+1
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(22, 10))
-    
+
     _ = ax1.plot(epochs, np.concatenate([mh.history['loss'] for mh in loss_history]), 'b-',
                  epochs, np.concatenate([mh.history['val_loss'] for mh in loss_history]), 'r-')
     ax1.legend(['Training', 'Validation'])
     ax1.set_title('Loss')
-    
+
     _ = ax2.plot(epochs, np.concatenate([mh.history['binary_accuracy'] for mh in loss_history]), 'b-',
                  epochs, np.concatenate([mh.history['val_binary_accuracy'] for mh in loss_history]), 'r-')
     ax2.legend(['Training', 'Validation'])
     ax2.set_title('Binary Accuracy (%)')
-    
+
     fig.savefig("loss.png")
     print("loss.png saved")
 
@@ -342,17 +342,17 @@ finally:
     seg_model.load_weights(weight_path)
     seg_model.save('seg_model.h5')
     print('seg_model.h5 saved')
-    
+
     pred_y = seg_model.predict(valid_x)
     print(pred_y.shape, pred_y.min(axis=0).max(), pred_y.max(axis=0).min(), pred_y.mean())
-    
+
     fig, ax = plt.subplots(1, 1, figsize = (6, 6))
     ax.hist(pred_y.ravel(), np.linspace(0, 1, 20))
     ax.set_xlim(0, 1)
     ax.set_yscale('log', nonposy='clip')
     fig.savefig("validate.png")
     print("validate.png saved")
-    
+
     if IMG_SCALING is not None:
         fullres_model = models.Sequential()
         fullres_model.add(layers.AvgPool2D(IMG_SCALING, input_shape = (None, None, 3)))
