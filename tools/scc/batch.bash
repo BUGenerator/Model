@@ -12,7 +12,8 @@
 # Specify the minimum GPU compute capability
 #$ -l gpu_c=3.5
 
-module load python/3.6.2 cuda/8.0 cudnn/5.1 tensorflow
+# module load python/3.6.2 cuda/8.0 cudnn/5.1 tensorflow
+module load python/3.6.0 cuda/8.0 cudnn/5.1 tensorflow/r1.0_python-3.6.0
 cd /projectnb/ece601/BUGenerator
 
 # program name or command and its options and arguments

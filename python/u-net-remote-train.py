@@ -90,7 +90,7 @@ def masks_as_color(in_mask_list):
             all_masks[:,:] += scale(i) * rle_decode(mask)
     return all_masks
 
-masks = pd.read_csv(os.path.join('../../input/', 'train_ship_segmentations.csv'))
+masks = pd.read_csv(os.path.join(ship_dir, 'train_ship_segmentations.csv'))
 not_empty = pd.notna(masks.EncodedPixels)
 print(not_empty.sum(), 'masks in', masks[not_empty].ImageId.nunique(), 'images')
 print((~not_empty).sum(), 'empty images in', masks.ImageId.nunique(), 'total images')
@@ -160,7 +160,7 @@ dg_args = dict(featurewise_center = False,
                   width_shift_range = 0.1,
                   height_shift_range = 0.1,
                   shear_range = 0.01,
-                  zoom_range = [0.9, 1.25],
+                  zoom_range = [0.`9`, 1.25],
                   horizontal_flip = True,
                   vertical_flip = True,
                   fill_mode = 'reflect',
