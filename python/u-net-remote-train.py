@@ -9,11 +9,10 @@ IMG_SCALING = (3, 3)
 VALID_IMG_COUNT = 1000
 # maximum number of steps_per_epoch in training (random order)
 BATCH_SIZE = 48
-MAX_TRAIN_STEPS = 100
+MAX_TRAIN_STEPS = 10
 # after each number of epochs it will check where loss goal is reached
-MAX_TRAIN_EPOCHS = 3
+MAX_TRAIN_EPOCHS = 200
 LOSS_GOAL = -0.2
-# as of 2.0.8 keras has no support
 AUGMENT_BRIGHTNESS = False
 TEST_PERCENTAGE = 0.3
 
@@ -300,7 +299,7 @@ reduceLROnPlat = ReduceLROnPlateau(monitor='val_loss', factor=0.33,
                                    cooldown=0, min_lr=1e-8)
 
 early = EarlyStopping(monitor="val_loss", mode="min", verbose=2,
-                      patience=20) # probably needs to be more patient, but kaggle time is limited
+                      patience=30)
 
 callbacks_list = [checkpoint, early, reduceLROnPlat]
 
@@ -337,8 +336,13 @@ def show_loss(loss_history):
 
 loss_history = []
 try:
+    # earlyStopTime = 0
     while True:
         loss_history.append(fit())
+        if callbacks_list[1].stopped_epoch != 0:
+            #earlyStopTime = earlyStopTime + 1
+            #if earlyStopTime > 1:
+            break
         if np.min([mh.history['val_loss'] for mh in loss_history]) < LOSS_GOAL:
             break
 except KeyboardInterrupt:
