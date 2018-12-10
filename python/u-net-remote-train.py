@@ -12,9 +12,12 @@ BATCH_SIZE = 48
 MAX_TRAIN_STEPS = 100
 # after each number of epochs it will check where loss goal is reached
 MAX_TRAIN_EPOCHS = 3
-LOSS_GOAL = -0.2
+LOSS_GOAL = -0.3
 AUGMENT_BRIGHTNESS = False
 TEST_PERCENTAGE = 0.3
+
+SAMPLES_PER_GROUP = 6000
+
 
 import os
 import numpy as np # linear algebra
@@ -114,7 +117,7 @@ unique_img_ids['has_ship_vec'] = unique_img_ids['has_ship'].map(lambda x: [x])
 # unique_img_ids['file_size_kb'].hist()
 masks.drop(['ships'], axis=1, inplace=True)
 
-SAMPLES_PER_GROUP = (unique_img_ids[unique_img_ids['ships']==1]['ImageId'].count() + unique_img_ids[unique_img_ids['ships']==2]['ImageId'].count())//3
+# SAMPLES_PER_GROUP = (unique_img_ids[unique_img_ids['ships']==1]['ImageId'].count() + unique_img_ids[unique_img_ids['ships']==2]['ImageId'].count())//3
 balanced_train_df = unique_img_ids.groupby('ships').apply(lambda x: x.sample(SAMPLES_PER_GROUP) if len(x) > SAMPLES_PER_GROUP else x)
 balanced_train_df['ships'].hist(bins=balanced_train_df['ships'].max()+1).figure.savefig("samples-dist.png")
 
@@ -364,5 +367,5 @@ finally:
         fullres_model.add(layers.UpSampling2D(IMG_SCALING))
     else:
         fullres_model = seg_model
-    #fullres_model.compile(optimizer=Adam(1e-3, decay=1e-6), loss=IoU, metrics=['binary_accuracy'])
+    fullres_model.compile(optimizer=Adam(1e-3, decay=1e-6), loss=IoU, metrics=['binary_accuracy'])
     fullres_model.save('model_fullres_keras.h5')
