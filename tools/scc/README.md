@@ -8,3 +8,11 @@
 - `source source_dl` to load modules we need
 - `module list` see currently-loaded module
 - https://acct.bu.edu/cgi-bin/perl/secure/redirect_sccmgmt.pl to see (cached) quota
+
+## Submit the job
+
+Firstly cd to here. (On SCC our path is at `/projectnb/ece601/BUGenerator/Model/tools/scc`)
+
+- `qsub batch.bash` (Specific arguments has been filed inside it)
+- `qstat -u MYUSERNAME` to see job status
+- `ls -l` to see stdout file (BUG*)
