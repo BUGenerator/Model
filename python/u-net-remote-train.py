@@ -20,6 +20,8 @@ import os
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 from skimage.io import imread
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.cm import get_cmap
 from skimage.segmentation import mark_boundaries
