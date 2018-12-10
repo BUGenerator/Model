@@ -19,8 +19,10 @@
 #$ -l gpu_c=3.5
 
 # module load python/3.6.2 cuda/8.0 cudnn/5.1 tensorflow
-# module load python/3.6.0 cuda/9.2 cudnn/7.2 tensorflow/r1.10 gcc/6.2.0
-module load python/3.6.2 cuda/9.1 cudnn/7.1 tensorflow/r1.8 gcc/6.2.0
+
+# Per INC12572943 at BU ITHC, cudnn/7.2 is included in cuda/9.2 now
+module load python/3.6.0 cuda/9.2 tensorflow/r1.10 gcc/6.2.0
+# module load python/3.6.2 cuda/9.1 cudnn/7.1 tensorflow/r1.8 gcc/6.2.0
 pip install --user keras
 cd /projectnb/ece601/BUGenerator/Model/python
 
