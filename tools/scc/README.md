@@ -13,6 +13,8 @@
 
 Firstly cd to here. (On SCC our path is at `/projectnb/ece601/BUGenerator/Model/tools/scc`)
 
-- `qsub batch.bash` (Specific arguments has been filed inside it)
+- `git pull -r` pull with rebase
+- `qsub batch.bash` to schedule a job (Specific arguments has been filed inside it)
 - `qstat -u MYUSERNAME` to see job status
+- `qdel JOBID` to cancel job
 - `ls -l` to see stdout file (BUG*)
