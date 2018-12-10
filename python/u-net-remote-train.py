@@ -291,7 +291,9 @@ checkpoint = ModelCheckpoint(weight_path, monitor='val_loss', verbose=1, save_be
 
 reduceLROnPlat = ReduceLROnPlateau(monitor='val_loss', factor=0.33,
                                    patience=1, verbose=1, mode='min',
-                                   min_delta=0.0001, cooldown=0, min_lr=1e-8)
+                                   # min_delta=0.0001,
+                                   # as of 2.0.8 keras has no support
+                                   cooldown=0, min_lr=1e-8)
 
 early = EarlyStopping(monitor="val_loss", mode="min", verbose=2,
                       patience=20) # probably needs to be more patient, but kaggle time is limited
