@@ -155,16 +155,16 @@ print(valid_x.shape, valid_y.shape)
 
 from keras.preprocessing.image import ImageDataGenerator
 dg_args = dict(featurewise_center = False,
-                  samplewise_center = False,
-                  rotation_range = 45,
-                  width_shift_range = 0.1,
-                  height_shift_range = 0.1,
-                  shear_range = 0.01,
-                  zoom_range = [0.9, 1.25],
-                  horizontal_flip = True,
-                  vertical_flip = True,
-                  fill_mode = 'reflect',
-                   data_format = 'channels_last')
+                samplewise_center = False,
+                rotation_range = 45,
+                width_shift_range = 0.1,
+                height_shift_range = 0.1,
+                shear_range = 0.01,
+                zoom_range = [0.9, 1.25],
+                horizontal_flip = True,
+                vertical_flip = True,
+                fill_mode = 'reflect',
+                data_format = 'channels_last')
 # brightness can be problematic since it seems to change the labels differently from the images
 if AUGMENT_BRIGHTNESS:
     dg_args['brightness_range'] = [0.5, 1.5]

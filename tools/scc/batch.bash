@@ -4,16 +4,20 @@
 #$ -N BUGenerator_train
 
 # Request 1 CPU
-#$ -pe omp 1
+#$ -pe omp 2
+
+# Time limit 3hrs
+#$ -l h_rt=3:00:00
 
 # Request 1 GPU (the number of GPUs needed should be divided by the number of CPUs requested above)
-#$ -l gpus=1
+#$ -l gpus=0.5
 
 # Specify the minimum GPU compute capability
 #$ -l gpu_c=3.5
 
 # module load python/3.6.2 cuda/8.0 cudnn/5.1 tensorflow
-module load python/3.6.0 cuda/8.0 cudnn/5.1 tensorflow/r1.0_python-3.6.0
+# module load python/3.6.0 cuda/9.2 cudnn/7.2 tensorflow/r1.10 gcc/6.2.0
+module load python/3.6.2 cuda/9.1 cudnn/7.1 tensorflow/r1.8 gcc/6.2.0
 cd /projectnb/ece601/BUGenerator/Model/python
 
 # program name or command and its options and arguments
