@@ -90,7 +90,7 @@ def masks_as_color(in_mask_list):
             all_masks[:,:] += scale(i) * rle_decode(mask)
     return all_masks
 
-masks = pd.read_csv(os.path.join(ship_dir, 'train_ship_segmentations.csv'))
+masks = pd.read_csv(os.path.join(ship_dir, 'train_ship_segmentations_v2.csv'))
 not_empty = pd.notna(masks.EncodedPixels)
 print(not_empty.sum(), 'masks in', masks[not_empty].ImageId.nunique(), 'images')
 print((~not_empty).sum(), 'empty images in', masks.ImageId.nunique(), 'total images')
