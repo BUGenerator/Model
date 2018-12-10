@@ -3,6 +3,9 @@
 #$ -P ece601
 #$ -N BUGenerator_train
 
+# Merge stderr and stdout
+#$ -j y
+
 # Request 1 CPU
 #$ -pe omp 2
 
