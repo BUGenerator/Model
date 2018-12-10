@@ -108,8 +108,8 @@ unique_img_ids['has_ship'] = unique_img_ids['ships'].map(lambda x: 1.0 if x>0 el
 unique_img_ids['has_ship_vec'] = unique_img_ids['has_ship'].map(lambda x: [x])
 # some files are too small/corrupt
 # unique_img_ids['file_size_kb'] = unique_img_ids['ImageId'].map(lambda c_img_id:
-                                                               os.stat(os.path.join(train_image_dir,
-                                                                                    c_img_id)).st_size/1024)
+#                                                                os.stat(os.path.join(train_image_dir,
+#                                                                                     c_img_id)).st_size/1024)
 # unique_img_ids = unique_img_ids[unique_img_ids['file_size_kb'] > 20] # keep only +50kb files
 # unique_img_ids['file_size_kb'].hist()
 masks.drop(['ships'], axis=1, inplace=True)
