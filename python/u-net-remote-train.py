@@ -119,6 +119,8 @@ masks.drop(['ships'], axis=1, inplace=True)
 
 # SAMPLES_PER_GROUP = (unique_img_ids[unique_img_ids['ships']==1]['ImageId'].count() + unique_img_ids[unique_img_ids['ships']==2]['ImageId'].count())//3
 balanced_train_df = unique_img_ids.groupby('ships').apply(lambda x: x.sample(SAMPLES_PER_GROUP) if len(x) > SAMPLES_PER_GROUP else x)
+# filter out ships = 0
+balanced_train_df = balanced_train_df[balanced_train_df['ships'] != 0]
 balanced_train_df['ships'].hist(bins=balanced_train_df['ships'].max()+1).figure.savefig("samples-dist.png")
 
 from sklearn.model_selection import train_test_split
@@ -286,6 +288,9 @@ def IoU(y_true, y_pred, eps=1e-6, thresh=0.5):
     intersection = K.sum(y_true * y_pred, axis=[1,2,3])
     union = K.sum(y_true, axis=[1,2,3]) + K.sum(y_pred, axis=[1,2,3]) - intersection
     return -K.mean( (intersection + eps) / (union + eps), axis=0)
+
+def per_image_accuracy(y_true, y_pred):
+    return 1
 
 from keras.callbacks import ModelCheckpoint, LearningRateScheduler, EarlyStopping, ReduceLROnPlateau
 weight_path="{}_weights.best.hdf5".format('seg_model')
