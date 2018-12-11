@@ -12,6 +12,7 @@ from skimage.morphology import binary_opening, disk, label
 import gc; gc.enable() # memory is tight
 from keras import models
 
+TEST_PERCENTAGE = 0.3
 SAMPLES_PER_GROUP = 6000
 
 
