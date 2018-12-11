@@ -1,7 +1,7 @@
 #!/bin/bash -l
 # Set SCC project
 #$ -P ece601
-#$ -N BUGenerator_train
+#$ -N BUGenerator_validate
 
 # Merge stderr and stdout
 #$ -j y

@@ -25,7 +25,7 @@ def IoU(y_true, y_pred, eps=1e-6):
     union = K.sum(y_true, axis=[1,2,3]) + K.sum(y_pred, axis=[1,2,3]) - intersection
     return -K.mean( (intersection + eps) / (union + eps), axis=0)
 
-fullres_model = models.load_model("model_fullres_keras.h5")
+fullres_model = models.load_model("model_fullres_keras.h5", custom_objects={'IoU': IoU})
 # fullres_model.compile(optimizer=Adam(1e-3, decay=1e-6), loss=IoU, metrics=['binary_accuracy'])
 # test_image_dir = os.path.join(ship_dir, 'test')
 
