@@ -15,6 +15,8 @@ from keras import models
 TEST_PERCENTAGE = 0.3
 SAMPLES_PER_GROUP = 6000
 BATCH_SIZE = 48
+# downsampling in preprocessing
+IMG_SCALING = (3, 3)
 
 # number of validation images to uset_x
 VALID_IMG_COUNT = 1000
