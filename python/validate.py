@@ -126,7 +126,7 @@ valid_df = pd.merge(masks, valid_ids)
 print(train_df.shape[0], 'training masks')
 print(valid_df.shape[0], 'validation masks')
 
-def raw_prediction(img, path=test_image_dir):
+def raw_prediction(img, path):
     c_img = imread(os.path.join(path, c_img_name))
     c_img = np.expand_dims(c_img, 0)/255.0
     cur_seg = fullres_model.predict(c_img)[0]
@@ -135,7 +135,7 @@ def raw_prediction(img, path=test_image_dir):
 def smooth(cur_seg):
     return binary_opening(cur_seg>0.99, np.expand_dims(disk(2), -1))
 
-def predict(img, path=test_image_dir):
+def predict(img, path):
     cur_seg, c_img = raw_prediction(img, path=path)
     return smooth(cur_seg), c_img
 
