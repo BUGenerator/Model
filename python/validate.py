@@ -15,6 +15,8 @@ from keras import models
 TEST_PERCENTAGE = 0.3
 SAMPLES_PER_GROUP = 6000
 
+# number of validation images to uset_x
+VALID_IMG_COUNT = 1000
 
 montage_rgb = lambda x: np.stack([montage(x[:, :, :, i]) for i in range(x.shape[3])], -1)
 ship_dir = '../../'
@@ -126,6 +128,27 @@ valid_df = pd.merge(masks, valid_ids)
 print(train_df.shape[0], 'training masks')
 print(valid_df.shape[0], 'validation masks')
 
+def make_image_gen(in_df, batch_size = BATCH_SIZE):
+    all_batches = list(in_df.groupby('ImageId'))
+    out_rgb = []
+    out_mask = []
+    while True:
+        np.random.shuffle(all_batches)
+        for c_img_id, c_masks in all_batches:
+            rgb_path = os.path.join(train_image_dir, c_img_id)
+            c_img = imread(rgb_path)
+            c_mask = np.expand_dims(masks_as_image(c_masks['EncodedPixels'].values), -1)
+            if IMG_SCALING is not None:
+                c_img = c_img[::IMG_SCALING[0], ::IMG_SCALING[1]]
+                c_mask = c_mask[::IMG_SCALING[0], ::IMG_SCALING[1]]
+            out_rgb += [c_img]
+            out_mask += [c_mask]
+            if len(out_rgb)>=batch_size:
+                yield np.stack(out_rgb, 0)/255.0, np.stack(out_mask, 0)
+                out_rgb, out_mask=[], []
+
+valid_x, valid_y = next(make_image_gen(valid_df, VALID_IMG_COUNT))
+
 def raw_prediction(img, path):
     c_img = imread(os.path.join(path, c_img_name))
     c_img = np.expand_dims(c_img, 0)/255.0
@@ -138,6 +161,17 @@ def smooth(cur_seg):
 def predict(img, path):
     cur_seg, c_img = raw_prediction(img, path=path)
     return smooth(cur_seg), c_img
+
+# Basic validation
+pred_y = fullres_model.predict(valid_x)
+print(pred_y.shape, pred_y.min(axis=0).max(), pred_y.max(axis=0).min(), pred_y.mean())
+
+fig, ax = plt.subplots(1, 1, figsize = (6, 6))
+ax.hist(pred_y.ravel(), np.linspace(0, 1, 20))
+ax.set_xlim(0, 1)
+ax.set_yscale('log', nonposy='clip')
+fig.savefig("validate.png")
+print("validate.png saved")
 
 ## Get a sample of each group of ship count
 samples = valid_df.groupby('ships').apply(lambda x: x.sample(1))
