@@ -176,7 +176,7 @@ num_pred_list = []
 for valid_x, valid_y in make_image_gen(valid_df, VALID_IMG_COUNT):
     pred_y = fullres_model.predict(valid_x)
 
-    label_fn = lambda a: label(a), return_num=True)[1]
+    label_fn = lambda a: label(a, return_num=True)[1]
 
     num_true_list.append(label_fn(valid_y))
     num_pred_list.append(label_fn(pred_y))
