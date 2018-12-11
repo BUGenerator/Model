@@ -290,8 +290,9 @@ def IoU(y_true, y_pred, eps=1e-6, thresh=0.5):
     return -K.mean( (intersection + eps) / (union + eps), axis=0)
 
 def per_image_accuracy(y_true, y_pred):
-    num_true = [label(a, return_num=True)[1] for a in y_true]
-    num_pred = [label(a, return_num=True)[1] for a in y_pred]
+    label_fn = lambda a: label(a, return_num=True)[1]
+    num_true = K.map_fn(label_fn, y_true)
+    num_pred = K.map_fn(label_fn, y_pred)
 
     return K.mean(K.equal(num_true, num_pred), axis=-1)
 
