@@ -289,6 +289,7 @@ def IoU(y_true, y_pred, eps=1e-6, thresh=0.5):
     union = K.sum(y_true, axis=[1,2,3]) + K.sum(y_pred, axis=[1,2,3]) - intersection
     return -K.mean( (intersection + eps) / (union + eps), axis=0)
 
+# This still doesn't work
 def per_image_accuracy(y_true, y_pred):
     label_fn = lambda a: label(K.eval(a), return_num=True)[1]
     num_true = K.map_fn(label_fn, y_true)
@@ -313,7 +314,7 @@ early = EarlyStopping(monitor="val_loss", mode="min", verbose=2,
 callbacks_list = [checkpoint, early, reduceLROnPlat]
 
 def fit():
-    seg_model.compile(optimizer=Adam(1e-3, decay=1e-6), loss=IoU, metrics=['binary_accuracy', per_image_accuracy])
+    seg_model.compile(optimizer=Adam(1e-3, decay=1e-6), loss=IoU, metrics=['binary_accuracy'])
 
     step_count = min(MAX_TRAIN_STEPS, train_df.shape[0]//BATCH_SIZE)
     aug_gen = create_aug_gen(make_image_gen(train_df))

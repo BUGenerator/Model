@@ -30,14 +30,14 @@ def IoU(y_true, y_pred, eps=1e-6):
     union = K.sum(y_true, axis=[1,2,3]) + K.sum(y_pred, axis=[1,2,3]) - intersection
     return -K.mean( (intersection + eps) / (union + eps), axis=0)
 
-def per_image_accuracy(y_true, y_pred):
+def np_per_image_accuracy(y_true, y_pred):
     label_fn = lambda a: label(K.eval(a), return_num=True)[1]
     num_true = K.map_fn(label_fn, y_true)
     num_pred = K.map_fn(label_fn, y_pred)
 
     return K.mean(K.equal(num_true, num_pred), axis=-1)
 
-fullres_model = models.load_model("model_fullres_keras.h5", custom_objects={'IoU': IoU, 'per_image_accuracy':per_image_accuracy})
+fullres_model = models.load_model("model_fullres_keras.h5", custom_objects={'IoU': IoU})
 # fullres_model.compile(optimizer=Adam(1e-3, decay=1e-6), loss=IoU, metrics=['binary_accuracy'])
 # test_image_dir = os.path.join(ship_dir, 'test')
 
@@ -170,11 +170,24 @@ def predict(img, path):
     return smooth(cur_seg), c_img
 
 # Basic validation
-pred_y = fullres_model.predict(valid_x)
-print(pred_y.shape, pred_y.min(axis=0).max(), pred_y.max(axis=0).min(), pred_y.mean())
+num_true_list = []
+num_pred_list = []
+
+for valid_x, valid_y in make_image_gen(valid_df, VALID_IMG_COUNT):
+    pred_y = fullres_model.predict(valid_x)
+
+    label_fn = lambda a: label(a), return_num=True)[1]
+
+    num_true_list.append(label_fn(valid_y))
+    num_pred_list.append(label_fn(pred_y))
+
+num_true_list = np.array(num_true_list)
+num_pred_list = np.array(num_pred_list)
+
+print(num_true_list.shape, (num_true_list == num_pred_list).astype('uint8').mean())
 
 fig, ax = plt.subplots(1, 1, figsize = (6, 6))
-ax.hist(pred_y.ravel(), np.linspace(0, 1, 20))
+ax.hist((num_true_list == num_pred_list), np.linspace(0, 1, 20))
 ax.set_xlim(0, 1)
 ax.set_yscale('log', nonposy='clip')
 fig.savefig("validate.png")
