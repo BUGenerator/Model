@@ -12,6 +12,8 @@ from skimage.morphology import binary_opening, disk, label
 import gc; gc.enable() # memory is tight
 from keras import models
 
+SAMPLES_PER_GROUP = 6000
+
 
 montage_rgb = lambda x: np.stack([montage(x[:, :, :, i]) for i in range(x.shape[3])], -1)
 ship_dir = '../../'
