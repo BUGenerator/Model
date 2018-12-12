@@ -207,7 +207,7 @@ max_pred_list = np.array(max_pred_list)
 binary_accuracy_list = np.array(binary_accuracy_list)
 
 print(num_true_list.shape, (num_true_list == num_pred_list).astype('uint8').mean())
-print("Zero ship images count: true {}, pred {}".format((max_true_list == 0).size, (max_pred_list == 0).size)
+print("Zero ship images count: true {}, pred {}".format((max_true_list == 0).size, (max_pred_list == 0).size))
 print("Binary Accuracy: "+binary_accuracy_list.mean())
 
 fig, ax = plt.subplots(1, 1, figsize = (6, 6))
