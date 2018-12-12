@@ -178,6 +178,9 @@ def predict(img, path):
 # Basic validation
 num_true_list = []
 num_pred_list = []
+max_true_list = []
+max_pred_list = []
+binary_accuracy_list = []
 
 all_batches = list(valid_df.groupby('ImageId'))
 np.random.shuffle(all_batches)
@@ -191,11 +194,21 @@ for c_img_id, c_masks in all_batches:
 
     num_true_list.append(label_fn(valid_y))
     num_pred_list.append(label_fn(pred_y))
+    max_true_list.append(valid_y.max())
+    max_pred_list.append(pred_y.max())
+    binary_accuracy_list.append((valid_y == pred_y).astype('uint8').mean())
 
 num_true_list = np.array(num_true_list)
 num_pred_list = np.array(num_pred_list)
 
+max_true_list = np.array(max_true_list)
+max_pred_list = np.array(max_pred_list)
+
+binary_accuracy_list = np.array(binary_accuracy_list)
+
 print(num_true_list.shape, (num_true_list == num_pred_list).astype('uint8').mean())
+print("Zero ship images count: true {}, pred {}".format((max_true_list == 0).size, (max_pred_list == 0).size)
+print("Binary Accuracy: "+binary_accuracy_list.mean())
 
 fig, ax = plt.subplots(1, 1, figsize = (6, 6))
 ax.hist((num_true_list == num_pred_list), np.linspace(0, 1, 20))
