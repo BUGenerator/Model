@@ -28,8 +28,10 @@ VALID_IMG_COUNT = 1000
 montage_rgb = lambda x: np.stack([montage(x[:, :, :, i]) for i in range(x.shape[3])], -1)
 ship_dir = '../../'
 model_name = "model_fullres_keras.h5"
-if len(sys.argv) > 1 and sys.argv[1]:
+if len(sys.argv) > 1 and sys.argv[1] and os.file.isfile(sys.argv[1]):
     model_name = sys.argv[1]
+
+print("Model Name: "+model_name)
 
 train_image_dir = os.path.join(ship_dir, 'train_v2')
 from keras.optimizers import Adam
