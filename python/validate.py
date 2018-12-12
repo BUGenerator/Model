@@ -1,4 +1,5 @@
 import os
+import sys
 import numpy as np # linear algebra
 import matplotlib
 matplotlib.use('Agg')
@@ -26,6 +27,10 @@ VALID_IMG_COUNT = 1000
 
 montage_rgb = lambda x: np.stack([montage(x[:, :, :, i]) for i in range(x.shape[3])], -1)
 ship_dir = '../../'
+model_name = "model_fullres_keras.h5"
+if len(sys.argv) > 1 and sys.argv[1]:
+    model_name = sys.argv[1]
+
 train_image_dir = os.path.join(ship_dir, 'train_v2')
 from keras.optimizers import Adam
 import keras.backend as K
@@ -129,7 +134,7 @@ masks.drop(['ships'], axis=1, inplace=True)
 
 # SAMPLES_PER_GROUP = (unique_img_ids[unique_img_ids['ships']==1]['ImageId'].count() + unique_img_ids[unique_img_ids['ships']==2]['ImageId'].count())//3
 balanced_train_df = unique_img_ids.groupby('ships').apply(lambda x: x.sample(SAMPLES_PER_GROUP) if len(x) > SAMPLES_PER_GROUP else x)
-balanced_train_df['ships'].hist(bins=balanced_train_df['ships'].max()+1).figure.savefig("samples-dist.png")
+balanced_train_df['ships'].hist(bins=balanced_train_df['ships'].max()+1).figure.savefig(model_name+"-samples-dist.png")
 
 from sklearn.model_selection import train_test_split
 train_ids, valid_ids = train_test_split(balanced_train_df,
@@ -214,7 +219,7 @@ fig, ax = plt.subplots(1, 1, figsize = (6, 6))
 ax.hist((num_true_list == num_pred_list), np.linspace(0, 1, 20))
 ax.set_xlim(0, 1)
 ax.set_yscale('log', nonposy='clip')
-fig.savefig("validate.png")
+fig.savefig(model_name+"validate.png")
 print("validate.png saved")
 
 ## Get a sample of each group of ship count
@@ -235,4 +240,4 @@ for (ax1, ax2, ax3, ax4), c_img_name in zip(m_axs, samples.ImageId.values):
     ax4.imshow(ground_truth)
     ax4.set_title('Ground Truth')
 
-fig.savefig('validation.png')
+fig.savefig(model_name+'validation.png')
