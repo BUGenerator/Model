@@ -11,7 +11,10 @@ from skimage.util import montage as montage
 from skimage.morphology import binary_opening, disk, label
 import gc; gc.enable() # memory is tight
 from keras import models
+from keras.preprocessing.image import load_img
 
+
+MODEL_IMG_SIZE = (768, 768)
 TEST_PERCENTAGE = 0.3
 SAMPLES_PER_GROUP = 6000
 BATCH_SIZE = 48
@@ -176,8 +179,13 @@ def predict(img, path):
 num_true_list = []
 num_pred_list = []
 
-for valid_x, valid_y in make_image_gen(valid_df, VALID_IMG_COUNT):
-    pred_y = fullres_model.predict(valid_x)
+all_batches = list(valid_df.groupby('ImageId'))
+np.random.shuffle(all_batches)
+for c_img_id, c_masks in all_batches:
+    img = load_img(os.path.join(train_image_dir, c_img_id), target_size=MODEL_IMG_SIZE)
+    img = np.expand_dims(img, 0)/255.0
+    valid_y = np.expand_dims(masks_as_image(c_masks['EncodedPixels'].values), -1)
+    pred_y = fullres_model.predict(img)[0]
 
     label_fn = lambda a: label(a, return_num=True)[1]
 
