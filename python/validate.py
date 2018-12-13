@@ -53,7 +53,7 @@ def np_per_image_accuracy(y_true, y_pred):
 
     return K.mean(K.equal(num_true, num_pred), axis=-1)
 
-fullres_model = models.load_model("model_fullres_keras.h5", custom_objects={'IoU': IoU})
+fullres_model = models.load_model(model_name, custom_objects={'IoU': IoU})
 fullres_model.compile(optimizer=Adam(1e-3, decay=1e-6), loss=IoU, metrics=['binary_accuracy'])
 # test_image_dir = os.path.join(ship_dir, 'test')
 
