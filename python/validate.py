@@ -25,6 +25,9 @@ IMG_SCALING = (3, 3)
 # number of validation images to uset_x
 VALID_IMG_COUNT = 1000
 
+# Keep random results consistent between models
+rndstate = np.random.RandomState(601)
+
 montage_rgb = lambda x: np.stack([montage(x[:, :, :, i]) for i in range(x.shape[3])], -1)
 ship_dir = '../../'
 model_name = "model_fullres_keras.h5"
@@ -135,12 +138,13 @@ unique_img_ids['has_ship_vec'] = unique_img_ids['has_ship'].map(lambda x: [x])
 masks.drop(['ships'], axis=1, inplace=True)
 
 # SAMPLES_PER_GROUP = (unique_img_ids[unique_img_ids['ships']==1]['ImageId'].count() + unique_img_ids[unique_img_ids['ships']==2]['ImageId'].count())//3
-balanced_train_df = unique_img_ids.groupby('ships').apply(lambda x: x.sample(SAMPLES_PER_GROUP) if len(x) > SAMPLES_PER_GROUP else x)
+balanced_train_df = unique_img_ids.groupby('ships').apply(lambda x: x.sample(SAMPLES_PER_GROUP, random_state=rndstate) if len(x) > SAMPLES_PER_GROUP else x)
 balanced_train_df['ships'].hist(bins=balanced_train_df['ships'].max()+1).figure.savefig(model_name+"-samples-dist.png")
 
 from sklearn.model_selection import train_test_split
 train_ids, valid_ids = train_test_split(balanced_train_df,
                  test_size = TEST_PERCENTAGE,
+                 random_state = rndstate,
                  #stratify = balanced_train_df['ships']
                 )
 train_df = pd.merge(masks, train_ids)
@@ -190,7 +194,8 @@ max_pred_list = []
 binary_accuracy_list = []
 
 all_batches = list(valid_df.groupby('ImageId'))
-np.random.shuffle(all_batches)
+# rndstate.shuffle(all_batches)
+# np.random.shuffle(all_batches)
 for c_img_id, c_masks in all_batches:
     img = load_img(os.path.join(train_image_dir, c_img_id), target_size=MODEL_IMG_SIZE)
     img = np.expand_dims(img, 0)/255.0
@@ -221,7 +226,7 @@ fig, ax = plt.subplots(1, 1, figsize = (6, 6))
 ax.hist((num_true_list == num_pred_list), np.linspace(0, 1, 20))
 ax.set_xlim(0, 1)
 ax.set_yscale('log', nonposy='clip')
-fig.savefig(model_name+"validate.png")
+fig.savefig(model_name+"-validate.png")
 print("validate.png saved")
 
 ## Get a sample of each group of ship count
@@ -242,4 +247,4 @@ for (ax1, ax2, ax3, ax4), c_img_name in zip(m_axs, samples.ImageId.values):
     ax4.imshow(ground_truth)
     ax4.set_title('Ground Truth')
 
-fig.savefig(model_name+'validation.png')
+fig.savefig(model_name+'-validation.png')
