@@ -14,16 +14,16 @@ MODEL_IMG_SIZE = (768, 768)
 
 def load_model():
     global fullres_model
-    from keras.optimizers import Adam
-    import keras.backend as K
-    def IoU(y_true, y_pred, eps=1e-6):
-        if np.max(y_true) == 0.0:
-            return IoU(1-y_true, 1-y_pred) ## empty image; calc IoU of zeros
-        intersection = K.sum(y_true * y_pred, axis=[1,2,3])
-        union = K.sum(y_true, axis=[1,2,3]) + K.sum(y_pred, axis=[1,2,3]) - intersection
-        return -K.mean( (intersection + eps) / (union + eps), axis=0)
     fullres_model = models.load_model("model_fullres_keras.h5")
     if os.environ.get('SHIPDETECTION_BROKEN_MODEL'):
+        from keras.optimizers import Adam
+        import keras.backend as K
+        def IoU(y_true, y_pred, eps=1e-6):
+            if np.max(y_true) == 0.0:
+                return IoU(1-y_true, 1-y_pred) ## empty image; calc IoU of zeros
+            intersection = K.sum(y_true * y_pred, axis=[1,2,3])
+            union = K.sum(y_true, axis=[1,2,3]) + K.sum(y_pred, axis=[1,2,3]) - intersection
+            return -K.mean( (intersection + eps) / (union + eps), axis=0)
         fullres_model.compile(optimizer=Adam(1e-3, decay=1e-6), loss=IoU, metrics=['binary_accuracy'])
 
 def _raw_prediction(img):
@@ -59,7 +59,7 @@ def extract_seg(seg):
         if region.area > 100:
             boundary = find_boundaries(region.image, mode='thick').astype(np.uint8)
             rgba = np.zeros((boundary.shape[0],boundary.shape[1],4), 'uint8')
-            rgba[..., 2] = 255
+            rgba[..., 0] = 255
             rgba[..., 3] = boundary*255
             img = Image.fromarray(rgba)
             output_buffer = BytesIO()
